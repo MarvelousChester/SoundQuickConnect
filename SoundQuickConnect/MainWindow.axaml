@@ -5,6 +5,11 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SoundQuickConnect.MainWindow"
         Title="SoundQuickConnect">
-    Welcome to Avalonia!
+
+        <StackPanel Margin="20">
+                <TextBlock Margin="0 5">Choose an animal:</TextBlock>
+                <ListBox x:Name="bluetoothDevicesListBox"/>
+        </StackPanel>
+
 </Window>
 
