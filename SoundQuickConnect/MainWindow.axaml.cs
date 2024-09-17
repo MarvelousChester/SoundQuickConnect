@@ -12,16 +12,21 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         Trace.Listeners.Add(new ConsoleTraceListener());
+
+
+        BluetoothHandler bluetoothHandler = new BluetoothHandler();
+        
+        bluetoothDevicesListBox.ItemsSource = bluetoothHandler.GetDeviceNames();
         
         
-        var bluetoothClient = new BluetoothClient();
-        var bluetoothDevices = bluetoothClient.PairedDevices;
-        Dictionary<string, BluetoothDeviceInfo> deviceInfosDict = new Dictionary<string, BluetoothDeviceInfo>();
-        foreach (var device in bluetoothDevices)
-        {
-            deviceInfosDict.Add(device.DeviceName, device);
-        }
-        bluetoothDevicesListBox.ItemsSource = deviceInfosDict.Keys;
+        // TODO add a button
+        // TODO then add a connect button that will connect to device
+        // TODO Add a refresh button
+        
+        // REFACTOR 
+        // Make into a small icon thing 
+
+        // TODO add start up option
     }
     
     
