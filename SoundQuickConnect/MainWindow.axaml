@@ -7,8 +7,12 @@
         Title="SoundQuickConnect">
 
         <StackPanel Margin="20">
-                <TextBlock Margin="0 5">Choose an animal:</TextBlock>
+                <TextBlock Margin="0 5">Paired Devices</TextBlock>
                 <ListBox x:Name="bluetoothDevicesListBox"/>
+                <Button x:Name="refreshBtn">Refresh</Button>
+                <Button x:Name="connectBtn">Connect</Button>
+                <Button x:Name="addQuickMenuBtn">Add</Button>
+                <ListBox x:Name="quickConnectListBox"></ListBox>
         </StackPanel>
 
 </Window>
