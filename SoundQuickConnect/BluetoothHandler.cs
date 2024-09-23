@@ -14,7 +14,7 @@ public class BluetoothHandler
         FetchBluetoothPairedDevices();
     }
     
-    private void FetchBluetoothPairedDevices()
+    public void FetchBluetoothPairedDevices()
     {
         var bluetoothDevices = bluetoothClient.PairedDevices;
         deviceInfosDict = new Dictionary<string, BluetoothDeviceInfo>();
