@@ -2,16 +2,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SoundQuickConnect"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SoundQuickConnect.MainWindow"
-        Title="SoundQuickConnect">
-
+        DataContext=""
+        Title="SoundQuickConnect"
+        x:DataType="local:MainWindow"
+        x:CompileBindings="True">
+        
+        <Design.DataContext>
+                <local:MainWindow/>
+        </Design.DataContext>
         <StackPanel Margin="20">
-                <TextBlock Margin="0 5">Paired Devices</TextBlock>
-                <ListBox x:Name="bluetoothDevicesListBox"/>
+               
+                <TextBlock Text="">Paired Devices</TextBlock>
+                <ListBox SelectionChanged="BluetoothDevicesListBox_OnSelectionChanged" SelectionMode="Toggle" x:Name="bluetoothDevicesListBox"/>
                 <Button Click="RefreshBtn_OnClick" x:Name="refreshBtn">Refresh</Button>
                 <Button x:Name="connectBtn">Connect</Button>
-                <Button x:Name="addQuickMenuBtn">Add</Button>
+                <Button Click="AddQuickMenuBtn_OnClick" x:Name="addQuickMenuBtn">Add</Button>
                 <ListBox x:Name="quickConnectListBox"></ListBox>
         </StackPanel>
 

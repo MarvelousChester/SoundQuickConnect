@@ -1,14 +1,36 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using InTheHand.Net.Sockets;
 
 namespace SoundQuickConnect;
 
+
+
 public partial class MainWindow : Window
 {
+    class BluetoothDevice
+    {
+        public string Name { get; set; }
+
+        public BluetoothDevice()
+        {
+            
+        }
+    }
+    
     private BluetoothHandler bluetoothHandler;
+    private ICollection<string> pairedDevices = new List<string>();
+    private ObservableCollection<string> observableCollectionPairedDevices;
+    private ObservableCollection<string> QuickConnectDevices = new ObservableCollection<string>();
+    
+    public class MainWindowViewModel
+    {
+        public string Greeting => "Welcome to Avalonia!";
+    }
     
     public MainWindow()
     {
@@ -17,24 +39,46 @@ public partial class MainWindow : Window
         Trace.Listeners.Add(new ConsoleTraceListener());
         bluetoothHandler = new BluetoothHandler();
         RefreshDevices();
-        // TODO add a button
-        // TODO then add a connect button that will connect to device
-        // TODO Add a refresh button
+        quickConnectListBox.ItemsSource = QuickConnectDevices;
+        observableCollectionPairedDevices = new ObservableCollection<string>(pairedDevices);
+        bluetoothDevicesListBox.ItemsSource = observableCollectionPairedDevices;
 
-        // REFACTOR 
-        // Make into a small icon thing 
-
-        // TODO add start up option
     }
 
     private void RefreshDevices()
     {
         bluetoothHandler.FetchBluetoothPairedDevices();
-        bluetoothDevicesListBox.ItemsSource = bluetoothHandler.GetDeviceNames();
+        pairedDevices = bluetoothHandler.GetDeviceNames();
     }
 
+    private void AddToQuickConnectBox(string deviceName)
+    {
+        quickConnectListBox.Items.Add(deviceName);
+    }
+
+    private void RemoveDeviceFromPairedOptions(string deviceName)
+    {
+        bluetoothDevicesListBox.Items.Remove(deviceName);
+    }
+    
+    
     private void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
     {
         RefreshDevices();
+    }
+
+
+    private void AddQuickMenuBtn_OnClick(object? sender, RoutedEventArgs e)
+    {
+        string selectedDevice = bluetoothDevicesListBox.SelectedItem.ToString();
+        AddToQuickConnectBox(selectedDevice);
+        RemoveDeviceFromPairedOptions(selectedDevice);
+    }
+
+    private void BluetoothDevicesListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        string selectedDevice = bluetoothDevicesListBox.SelectedItem.ToString();
+        QuickConnectDevices.Add(selectedDevice);
+        quickConnectListBox.ItemsSource = QuickConnectDevices;
     }
 }
