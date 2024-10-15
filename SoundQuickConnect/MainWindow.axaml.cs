@@ -50,6 +50,8 @@ public partial class MainWindow : Window
 
     private void ConnectBtn_OnClick(object? sender, RoutedEventArgs e)
     {
+        // TODO, make sure to refresh the C# devices so that we can latest info and also verify not connected already before
+        // triggering this, actually do that in the bluetoothHandler, this file is mainly for the UI section
         if (selectedQuickConnectDevice == "")
         {
             // TODO
