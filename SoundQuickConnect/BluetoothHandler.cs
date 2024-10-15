@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Avalonia.Controls;
+using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 namespace SoundQuickConnect;
 
@@ -27,6 +28,14 @@ public class BluetoothHandler
     public ICollection<string> GetDeviceNames()
     {
         return deviceInfosDict.Keys;
+    }
+
+    public bool ConnectToDevice(string deviceName)
+    {
+        if(!deviceInfosDict.TryGetValue(deviceName, out var device)){return false;}
+        bluetoothClient.Connect(device.DeviceAddress, BluetoothService.SerialPort);
+        return true;
+
     }
     
     //TODO Create a method to refresh dictionary/Devices

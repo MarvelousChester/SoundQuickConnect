@@ -18,9 +18,10 @@
                 <TextBlock Text="">Paired Devices</TextBlock>
                 <ListBox SelectionChanged="BluetoothDevicesListBox_OnSelectionChanged" SelectionMode="Toggle" x:Name="bluetoothDevicesListBox"/>
                 <Button Click="RefreshBtn_OnClick" x:Name="refreshBtn">Refresh</Button>
-                <Button x:Name="connectBtn">Connect</Button>
-                <Button Click="AddQuickMenuBtn_OnClick" x:Name="addQuickMenuBtn">Add</Button>
-                <ListBox x:Name="quickConnectListBox"></ListBox>
+                <Button Click="ConnectBtn_OnClick" x:Name="connectBtn">Connect</Button>
+                <TextBlock FontWeight="Bold" x:Name="SelectedQuickConnectDeviceHeader">Selected Device To Quick Connect</TextBlock>
+                <TextBlock x:Name="SelectedQuickConnectDevice"></TextBlock>
+              
         </StackPanel>
 
 </Window>
