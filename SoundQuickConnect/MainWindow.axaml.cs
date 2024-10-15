@@ -13,8 +13,6 @@ namespace SoundQuickConnect;
 
 public partial class MainWindow : Window
 {
-
-    
     private BluetoothHandler bluetoothHandler;
     private ICollection<string> pairedDevices = new List<string>();
 
@@ -52,11 +50,15 @@ public partial class MainWindow : Window
     {
         // TODO, make sure to refresh the C# devices so that we can latest info and also verify not connected already before
         // triggering this, actually do that in the bluetoothHandler, this file is mainly for the UI section
+        
         if (selectedQuickConnectDevice == "")
         {
             // TODO
             // Error, no device selected
         }
         bluetoothHandler.ConnectToDevice(selectedQuickConnectDevice);
+        
+        // Write to file for saving purposes
+
     }
 }

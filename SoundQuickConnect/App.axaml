@@ -3,7 +3,18 @@
              x:Class="SoundQuickConnect.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+     <TrayIcon.Icons>
+         <TrayIcons>
+             <TrayIcon Icon="/Assets/Logo.ico" 
+                       ToolTipText="Logo">
+                 <TrayIcon.Menu>
+                     <NativeMenu>
+                        <NativeMenuItem Header="Quick Connect" Click="NativeMenuItem_OnClick"></NativeMenuItem>
+                     </NativeMenu>
+                 </TrayIcon.Menu>
+             </TrayIcon>
+         </TrayIcons>
+     </TrayIcon.Icons>
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

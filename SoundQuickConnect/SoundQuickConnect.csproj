@@ -16,5 +16,21 @@
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
         <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.1.43" />
+        <AvaloniaResource Include="Assets\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Logo.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Logo.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Logo.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Logo.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>
