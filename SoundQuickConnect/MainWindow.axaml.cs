@@ -37,7 +37,9 @@ public partial class MainWindow : Window
     {
         RefreshDevices();
     }
-    
+
+
+
     private void BluetoothDevicesListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         string selectedDevice = bluetoothDevicesListBox.SelectedItem.ToString();
