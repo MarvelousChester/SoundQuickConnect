@@ -13,8 +13,11 @@ public partial class App : Application
 {
 
     private Forms.NotifyIcon _notifyIcon;
-    
-    
+    private BluetoothHandler bluetoothHandler;
+    private ICollection<string> pairedDevices = new List<string>();
+
+    private string selectedQuickConnectDevice;
+    private Forms.ToolStripDropDownButton devicesDropDownMenu;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -36,16 +39,65 @@ public partial class App : Application
 
     private void OnStartup(object s, ControlledApplicationLifetimeStartupEventArgs e)
     {
+        bluetoothHandler = new BluetoothHandler();
         _notifyIcon = new Forms.NotifyIcon();
         _notifyIcon.Icon = new System.Drawing.Icon("Assets/bluetooth-32.ico");
         _notifyIcon.Visible = true;
+
+        _notifyIcon.Text = "SoundQuickConnect";
+
+        _notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
+        devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices", null);
+        _notifyIcon.ContextMenuStrip.Items.Add(devicesDropDownMenu);
+        RefreshDevices();
+        // clicked I grab that and save it. Then from saving it I can 
     }
 
+
+    private Forms.ToolStripDropDownItem ToDropDownItem(string deviceName)
+    {
+        return new Forms.ToolStripMenuItem(deviceName, null, (sender, args) =>
+        {
+            selectedQuickConnectDevice = deviceName;
+            bluetoothHandler.ConnectToDevice(selectedQuickConnectDevice);
+        });
+    }
+    
+    private void RefreshDevices()
+    {
+        bluetoothHandler.FetchBluetoothPairedDevices();
+        pairedDevices = bluetoothHandler.GetDeviceNames().ToList();
+
+        foreach (string device in pairedDevices)
+        {
+            devicesDropDownMenu.DropDownItems.Add(ToDropDownItem(device));
+        }
+    }
+
+    
+    private void ConnectBtn_OnClick(object? sender, EventArgs e)
+    {
+        // TODO, make sure to refresh the C# devices so that we can latest info and also verify not connected already before
+        // triggering this, actually do that in the bluetoothHandler, this file is mainly for the UI section
+        
+        if (selectedQuickConnectDevice == "")
+        {
+            // TODO
+            // Error, no device selected
+        }
+        bluetoothHandler.ConnectToDevice(selectedQuickConnectDevice);
+        // Write to file for saving purposes
+
+    }
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         _notifyIcon.Dispose();
-    } 
-    
+    }
+
+    private void OnDevicesClick(object sender, EventArgs e)
+    {
+        
+    }
 
     
 
