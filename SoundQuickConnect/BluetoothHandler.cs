@@ -29,15 +29,17 @@ public class BluetoothHandler
     {
         return deviceInfosDict.Keys;
     }
+    
 
     public bool ConnectToDevice(string deviceName)
     {
-        if(!deviceInfosDict.TryGetValue(deviceName, out var device)){return false;}
+        if (!deviceInfosDict.TryGetValue(deviceName, out var device))
+        {
+            return false;
+        }
+        device.Refresh();
         bluetoothClient.Connect(device.DeviceAddress, BluetoothService.SerialPort);
         return true;
 
     }
-    
-    //TODO Create a method to refresh dictionary/Devices
-    
 }
