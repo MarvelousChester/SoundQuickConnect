@@ -18,6 +18,7 @@ public partial class App : Application
 
     private string selectedQuickConnectDevice;
     private Forms.ToolStripDropDownButton devicesDropDownMenu;
+    private Forms.ToolStripButton refreshButton;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -43,17 +44,29 @@ public partial class App : Application
         _notifyIcon = new Forms.NotifyIcon();
         _notifyIcon.Icon = new System.Drawing.Icon("Assets/bluetooth-32.ico");
         _notifyIcon.Visible = true;
-
         _notifyIcon.Text = "SoundQuickConnect";
-
         _notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
-        devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices", null);
-        _notifyIcon.ContextMenuStrip.Items.Add(devicesDropDownMenu);
+       
+        DevicesDropDownInit();
         RefreshDevices();
-        // clicked I grab that and save it. Then from saving it I can 
+        RefreshBtnInit();
     }
 
-
+    private void DevicesDropDownInit()
+    {
+        devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices");
+        _notifyIcon.ContextMenuStrip.Items.Add(devicesDropDownMenu);
+    }
+    
+    private void RefreshBtnInit()
+    {
+        refreshButton = new Forms.ToolStripButton("Refresh", null, (sender, args) =>
+        {
+            RefreshDevices();
+        });
+        _notifyIcon.ContextMenuStrip.Items.Add(refreshButton);
+    }
+    
     private Forms.ToolStripDropDownItem ToDropDownItem(string deviceName)
     {
         return new Forms.ToolStripMenuItem(deviceName, null, (sender, args) =>
@@ -73,7 +86,6 @@ public partial class App : Application
             devicesDropDownMenu.DropDownItems.Add(ToDropDownItem(device));
         }
     }
-
     
     private void ConnectBtn_OnClick(object? sender, EventArgs e)
     {
