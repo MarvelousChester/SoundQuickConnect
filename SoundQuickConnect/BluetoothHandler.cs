@@ -37,7 +37,12 @@ public class BluetoothHandler
         {
             return false;
         }
+
         device.Refresh();
+        if (device.Connected)
+        {
+            return true;
+        }
         bluetoothClient.Connect(device.DeviceAddress, BluetoothService.SerialPort);
         return true;
 
