@@ -7,45 +7,59 @@ namespace SoundQuickConnect;
 
 public class BluetoothHandler
 {
-    private BluetoothClient bluetoothClient;
-    private Dictionary<string, BluetoothDeviceInfo> deviceInfosDict = new Dictionary<string, BluetoothDeviceInfo>();
+    private readonly BluetoothClient _bluetoothClient; // Point of ReadOnly
+                                                       // indicates that assignment to the field can only occur as
+                                                       // part of the declaration or in a constructor in the same class
+                                                       // more you know!
+                                                       // The point is for Immutability once initialised is the only reason for use.
+                                                       // As a developer it also demonstrates intent
+    private Dictionary<string, BluetoothDeviceInfo> _bluetoothDevicesDict = new Dictionary<string, BluetoothDeviceInfo>();
 
     public BluetoothHandler()
     {
-        bluetoothClient = new BluetoothClient();
+        _bluetoothClient = new BluetoothClient();
         FetchBluetoothPairedDevices();
     }
     
     public void FetchBluetoothPairedDevices()
     {
-        var bluetoothDevices = bluetoothClient.PairedDevices;
-        deviceInfosDict = new Dictionary<string, BluetoothDeviceInfo>();
+        var bluetoothDevices = _bluetoothClient.PairedDevices;
+        _bluetoothDevicesDict = new Dictionary<string, BluetoothDeviceInfo>();
         foreach (var device in bluetoothDevices)
         {
-            deviceInfosDict.Add(device.DeviceName, device);
+            _bluetoothDevicesDict.Add(device.DeviceName, device);
         }
     }
     
     public ICollection<string> GetDeviceNames()
     {
-        return deviceInfosDict.Keys;
+        return _bluetoothDevicesDict.Keys;
     }
     
-
+    /// <summary>
+    /// Connects to device
+    /// </summary>
+    /// <param name="deviceName"></param>
+    /// <returns></returns>
     public bool ConnectToDevice(string deviceName)
     {
-        if (!deviceInfosDict.TryGetValue(deviceName, out var device))
+        if (!_bluetoothDevicesDict.TryGetValue(deviceName, out var device) || !IsDeviceConnected(device))
         {
             return false;
         }
-
-        device.Refresh();
-        if (device.Connected)
-        {
-            return true;
-        }
-        bluetoothClient.Connect(device.DeviceAddress, BluetoothService.SerialPort);
+        
+        _bluetoothClient.Connect(device.DeviceAddress, BluetoothService.SerialPort);
         return true;
+    }
 
+    /// <summary>
+    ///  Additional safety check to ensure always retrieving latest device information when check if connected
+    /// </summary>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    public bool IsDeviceConnected(BluetoothDeviceInfo device)
+    {
+        device.Refresh();
+        return device.Connected;
     }
 }
