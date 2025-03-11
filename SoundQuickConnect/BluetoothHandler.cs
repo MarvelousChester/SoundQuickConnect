@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Avalonia.Controls;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
