@@ -30,7 +30,6 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
             desktop.Startup += OnStartup;
             desktop.Exit += OnExit;
         }
@@ -87,29 +86,11 @@ public partial class App : Application
         }
     }
     
-    private void ConnectBtn_OnClick(object? sender, EventArgs e)
-    {
-        // TODO, make sure to refresh the C# devices so that we can latest info and also verify not connected already before
-        // triggering this, actually do that in the bluetoothHandler, this file is mainly for the UI section
-        
-        if (selectedQuickConnectDevice == "")
-        {
-            // TODO
-            // Error, no device selected
-        }
-        bluetoothHandler.ConnectToDevice(selectedQuickConnectDevice);
-        // Write to file for saving purposes
-
-    }
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         _notifyIcon.Dispose();
     }
-
-    private void OnDevicesClick(object sender, EventArgs e)
-    {
-        
-    }
+    
 
     
 
