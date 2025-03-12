@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Forms = System.Windows.Forms;
@@ -14,19 +12,23 @@ namespace SoundQuickConnect;
 public partial class App : Application
 {
 
-    private Forms.NotifyIcon _notifyIcon;
-    private BluetoothHandler bluetoothHandler;
-    private ICollection<string> pairedDevices = new List<string>();
+    private const string AppName = "SoundQuickConnect";
+    
+    private Forms.NotifyIcon _notifyIcon = null!;
+    private BluetoothHandler _bluetoothHandler = null!;
+    private ICollection<string> _pairedDevices = new List<string>();
+    private string _selectedQuickConnectDevice= null!;
 
-    private string selectedQuickConnectDevice;
-    private Forms.ToolStripDropDownButton devicesDropDownMenu;
-    private Forms.ToolStripButton refreshBtn;
+    private Forms.ToolStripDropDownButton _devicesDropDownMenu = null!;
+    private Forms.ToolStripButton _refreshBtn = null!;
     
-    private Forms.ToolStripMenuItem startUpToggleBtn;
+    // STARTUP Related
+    private Forms.ToolStripMenuItem _startUpToggleBtn = null!;
+    private const string StartUpTextChecked = "✔ Set On StartUp";
+    private const string StartUpTextUnchecked = "Set On StartUp";
+    private string _shortcutPath = null!;
+    private string? _exePath = null!; 
     
-    private const string startUpTextChecked = "✔ Set On StartUp";
-    private const string startUpTextUnchecked = "Set On StartUp";
-    private const string startUpDefaultText = startUpTextUnchecked;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -47,45 +49,51 @@ public partial class App : Application
 
     private void OnStartup(object s, ControlledApplicationLifetimeStartupEventArgs e)
     {
-        bluetoothHandler = new BluetoothHandler();
+        _bluetoothHandler = new BluetoothHandler();
         _notifyIcon = new Forms.NotifyIcon();
         _notifyIcon.Icon = new System.Drawing.Icon("Assets/bluetooth-32.ico");
         _notifyIcon.Visible = true;
-        _notifyIcon.Text = "SoundQuickConnect";
+        _notifyIcon.Text = AppName;
         _notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
        
+        _shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\SoundQuickConnect.lnk";
+        _exePath = Environment.ProcessPath; 
+        
         DevicesDropDownInit();
         RefreshDevices();
         RefreshBtnInit();
+        InitOnStartUpBtn();
         
-        // TODO Add a check, if shortcut already created, means that startup was enabled, however, if not that means disabled.
-        
-        startUpToggleBtn  = new Forms.ToolStripMenuItem(startUpDefaultText, null, (sender, args) =>
+    }
+
+    private void InitOnStartUpBtn()
+    {
+        _startUpToggleBtn  = new Forms.ToolStripMenuItem(StartUpTextUnchecked, null, (sender, args) =>
         {
+            
             EnableAppOnStartUp();
-            startUpToggleBtn.Text = startUpTextChecked;
+            _startUpToggleBtn.Text = StartUpTextChecked;
         });
         if (IsStartUpEnabled())
         {
-            startUpToggleBtn.Text = startUpTextChecked;
+            _startUpToggleBtn.Text = StartUpTextChecked;
         }
-        _notifyIcon.ContextMenuStrip.Items.Add(startUpToggleBtn);
-
+        _notifyIcon.ContextMenuStrip.Items.Add(_startUpToggleBtn);
     }
 
     private void DevicesDropDownInit()
     {
-        devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices");
-        _notifyIcon.ContextMenuStrip.Items.Add(devicesDropDownMenu);
+        _devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices");
+        _notifyIcon.ContextMenuStrip.Items.Add(_devicesDropDownMenu);
     }
     
     private void RefreshBtnInit()
     {
-        refreshBtn = new Forms.ToolStripButton("Refresh", null, (sender, args) =>
+        _refreshBtn = new Forms.ToolStripButton("Refresh", null, (sender, args) =>
         {
             RefreshDevices();
         });
-        _notifyIcon.ContextMenuStrip.Items.Add(refreshBtn);
+        _notifyIcon.ContextMenuStrip.Items.Add(_refreshBtn);
     }
     
     
@@ -94,43 +102,41 @@ public partial class App : Application
     {
         return new Forms.ToolStripMenuItem(deviceName, null, (sender, args) =>
         {
-            selectedQuickConnectDevice = deviceName;
-            bluetoothHandler.ConnectToDevice(selectedQuickConnectDevice);
+            _selectedQuickConnectDevice = deviceName;
+            _bluetoothHandler.ConnectToDevice(_selectedQuickConnectDevice);
         });
     }
     
     private void RefreshDevices()
     {
-        bluetoothHandler.FetchBluetoothPairedDevices();
-        pairedDevices = bluetoothHandler.GetDeviceNames().ToList();
+        _bluetoothHandler.FetchBluetoothPairedDevices();
+        _pairedDevices = _bluetoothHandler.GetDeviceNames().ToList();
 
-        foreach (string device in pairedDevices)
+        foreach (string device in _pairedDevices)
         {
-            devicesDropDownMenu.DropDownItems.Add(ToDropDownItem(device));
+            _devicesDropDownMenu.DropDownItems.Add(ToDropDownItem(device));
         }
     }
-
-    private string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\SoundQuickConnect.lnk";
-    private string exePath = System.Environment.ProcessPath; 
+    
     private void EnableAppOnStartUp()
     {
-
-        var dir = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-        var createShortCutCMD =
-            $"powershell \"$s=(New-Object -ComObject WScript.Shell).CreateShortcut('{shortcutPath}'); $s.TargetPath ='{exePath}'; $s.Save()\"";
+        var shortCutCmd =
+            $"powershell \"$s=(New-Object -ComObject WScript.Shell).CreateShortcut('{_shortcutPath}'); $s.TargetPath ='{_exePath}'; $s.Save()\"";
         
-        System.Diagnostics.Process process = new System.Diagnostics.Process();
-        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-        startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-        startInfo.FileName = "cmd.exe";
-        startInfo.Arguments = $"/C {createShortCutCMD}";
+        var process = new System.Diagnostics.Process();
+        var startInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+            FileName = "cmd.exe",
+            Arguments = $"/C {shortCutCmd}"
+        };
         process.StartInfo = startInfo;
         process.Start();
     }
 
     private bool IsStartUpEnabled()
     {
-        return File.Exists(shortcutPath);
+        return File.Exists(_shortcutPath);
     }
     
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
