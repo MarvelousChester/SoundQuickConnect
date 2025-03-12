@@ -59,11 +59,16 @@ public partial class App : Application
         RefreshBtnInit();
         
         // TODO Add a check, if shortcut already created, means that startup was enabled, however, if not that means disabled.
+        
         startUpToggleBtn  = new Forms.ToolStripMenuItem(startUpDefaultText, null, (sender, args) =>
         {
             EnableAppOnStartUp();
             startUpToggleBtn.Text = startUpTextChecked;
         });
+        if (IsStartUpEnabled())
+        {
+            startUpToggleBtn.Text = startUpTextChecked;
+        }
         _notifyIcon.ContextMenuStrip.Items.Add(startUpToggleBtn);
 
     }
@@ -105,10 +110,11 @@ public partial class App : Application
         }
     }
 
+    private string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\SoundQuickConnect.lnk";
+    private string exePath = System.Environment.ProcessPath; 
     private void EnableAppOnStartUp()
     {
-        string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\SoundQuickConnect.lnk";
-        string exePath = System.Environment.ProcessPath; 
+
         var dir = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         var createShortCutCMD =
             $"powershell \"$s=(New-Object -ComObject WScript.Shell).CreateShortcut('{shortcutPath}'); $s.TargetPath ='{exePath}'; $s.Save()\"";
@@ -120,6 +126,11 @@ public partial class App : Application
         startInfo.Arguments = $"/C {createShortCutCMD}";
         process.StartInfo = startInfo;
         process.Start();
+    }
+
+    private bool IsStartUpEnabled()
+    {
+        return File.Exists(shortcutPath);
     }
     
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
