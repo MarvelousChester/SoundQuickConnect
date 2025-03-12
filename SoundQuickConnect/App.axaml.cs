@@ -32,9 +32,7 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        
     }
-    
     
     public override void OnFrameworkInitializationCompleted()
     {
@@ -70,10 +68,18 @@ public partial class App : Application
     {
         _startUpToggleBtn  = new Forms.ToolStripMenuItem(StartUpTextUnchecked, null, (sender, args) =>
         {
-            
-            EnableAppOnStartUp();
-            _startUpToggleBtn.Text = StartUpTextChecked;
+            if (IsStartUpEnabled())
+            {
+                DisableAppOnStartUp();
+                _startUpToggleBtn.Text = StartUpTextUnchecked;
+            }
+            else
+            {
+                EnableAppOnStartUp();
+                _startUpToggleBtn.Text = StartUpTextChecked;
+            }
         });
+        
         if (IsStartUpEnabled())
         {
             _startUpToggleBtn.Text = StartUpTextChecked;
@@ -95,8 +101,6 @@ public partial class App : Application
         });
         _notifyIcon.ContextMenuStrip.Items.Add(_refreshBtn);
     }
-    
-    
     
     private Forms.ToolStripDropDownItem ToDropDownItem(string deviceName)
     {
@@ -134,6 +138,14 @@ public partial class App : Application
         process.Start();
     }
 
+    private void DisableAppOnStartUp()
+    {
+        if (IsStartUpEnabled())
+        {
+            File.Delete(_shortcutPath);   
+        }
+    }
+    
     private bool IsStartUpEnabled()
     {
         return File.Exists(_shortcutPath);
