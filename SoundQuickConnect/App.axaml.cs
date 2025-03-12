@@ -21,7 +21,12 @@ public partial class App : Application
     private string selectedQuickConnectDevice;
     private Forms.ToolStripDropDownButton devicesDropDownMenu;
     private Forms.ToolStripButton refreshBtn;
+    
     private Forms.ToolStripMenuItem startUpToggleBtn;
+    
+    private const string startUpTextChecked = "✔ Set On StartUp";
+    private const string startUpTextUnchecked = "Set On StartUp";
+    private const string startUpDefaultText = startUpTextUnchecked;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -54,9 +59,10 @@ public partial class App : Application
         RefreshBtnInit();
         
         // TODO Add a check, if shortcut already created, means that startup was enabled, however, if not that means disabled.
-        startUpToggleBtn  = new Forms.ToolStripMenuItem("Set On StartUp", null, (sender, args) =>
+        startUpToggleBtn  = new Forms.ToolStripMenuItem(startUpDefaultText, null, (sender, args) =>
         {
             EnableAppOnStartUp();
+            startUpToggleBtn.Text = startUpTextChecked;
         });
         _notifyIcon.ContextMenuStrip.Items.Add(startUpToggleBtn);
 
@@ -116,24 +122,9 @@ public partial class App : Application
         process.Start();
     }
     
-    private void AppShortcutToDesktop(string linkURL)
-    {
-        string startUpDir = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-
-        using (StreamWriter writer = new StreamWriter(startUpDir + "\\" + linkURL + ".url"))
-        {
-            writer.WriteLine("[InternetShortcut]");
-            writer.WriteLine("URL=" + linkURL);
-        }
-    }
     private void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         _notifyIcon.Dispose();
     }
-    
-
-    
-
-    
     
 }
