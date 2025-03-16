@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Avalonia.Controls;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -21,7 +22,8 @@ public class BluetoothHandler
         FetchBluetoothPairedDevices();
     }
     
-    public void FetchBluetoothPairedDevices()
+    
+    private void FetchBluetoothPairedDevices()
     {
         var bluetoothDevices = _bluetoothClient.PairedDevices;
         _bluetoothDevicesDict = new Dictionary<string, BluetoothDeviceInfo>();
@@ -31,8 +33,9 @@ public class BluetoothHandler
         }
     }
     
-    public ICollection<string> GetDeviceNames()
+    public ICollection<string> GetPairedDeviceNames()
     {
+        FetchBluetoothPairedDevices();
         return _bluetoothDevicesDict.Keys;
     }
     

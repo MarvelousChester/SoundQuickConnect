@@ -16,8 +16,6 @@ public partial class App : Application
     
     private Forms.NotifyIcon _notifyIcon = null!;
     private BluetoothHandler _bluetoothHandler = null!;
-    private ICollection<string> _pairedDevices = new List<string>();
-    private string _selectedQuickConnectDevice= null!;
 
     private Forms.ToolStripDropDownButton _devicesDropDownMenu = null!;
     private Forms.ToolStripButton _refreshBtn = null!;
@@ -106,17 +104,14 @@ public partial class App : Application
     {
         return new Forms.ToolStripMenuItem(deviceName, null, (sender, args) =>
         {
-            _selectedQuickConnectDevice = deviceName;
-            _bluetoothHandler.ConnectToDevice(_selectedQuickConnectDevice);
+            _bluetoothHandler.ConnectToDevice(deviceName);
         });
     }
     
     private void RefreshDevices()
     {
-        _bluetoothHandler.FetchBluetoothPairedDevices();
-        _pairedDevices = _bluetoothHandler.GetDeviceNames().ToList();
-
-        foreach (string device in _pairedDevices)
+        _devicesDropDownMenu.DropDownItems.Clear();
+        foreach (var device in _bluetoothHandler.GetPairedDeviceNames())
         {
             _devicesDropDownMenu.DropDownItems.Add(ToDropDownItem(device));
         }
