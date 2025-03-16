@@ -1,7 +1,7 @@
+// NOTE: The reasoning for Avalonia was that original intended it to be UI application but decided not to but keeping as
+// If I ever want to do more with it, but for now, it suits my purposes.
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -19,6 +19,7 @@ public partial class App : Application
 
     private Forms.ToolStripDropDownButton _devicesDropDownMenu = null!;
     private Forms.ToolStripButton _refreshBtn = null!;
+    private Forms.ToolStripButton _closeBtn = null!;
     
     // STARTUP Related
     private Forms.ToolStripMenuItem _startUpToggleBtn = null!;
@@ -55,11 +56,11 @@ public partial class App : Application
         _shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\SoundQuickConnect.lnk";
         _exePath = Environment.ProcessPath; 
         
-        DevicesDropDownInit();
-        RefreshDevices();
-        RefreshBtnInit();
+        InitDevicesDropDown();
+        InitRefreshDevices();
+        InitRefreshBtn();
         InitOnStartUpBtn();
-        
+        InitExitBtn();
     }
 
     private void InitOnStartUpBtn()
@@ -85,17 +86,26 @@ public partial class App : Application
         _notifyIcon.ContextMenuStrip.Items.Add(_startUpToggleBtn);
     }
 
-    private void DevicesDropDownInit()
+    private void InitExitBtn()
+    {
+        _closeBtn = new Forms.ToolStripButton("Exit", null, (sender, args) =>
+        {
+            Environment.Exit(0);
+        });
+        _notifyIcon.ContextMenuStrip.Items.Add(_closeBtn);
+    }
+    
+    private void InitDevicesDropDown()
     {
         _devicesDropDownMenu = new Forms.ToolStripDropDownButton("Devices");
         _notifyIcon.ContextMenuStrip.Items.Add(_devicesDropDownMenu);
     }
     
-    private void RefreshBtnInit()
+    private void InitRefreshBtn()
     {
         _refreshBtn = new Forms.ToolStripButton("Refresh", null, (sender, args) =>
         {
-            RefreshDevices();
+            InitRefreshDevices();
         });
         _notifyIcon.ContextMenuStrip.Items.Add(_refreshBtn);
     }
@@ -114,7 +124,7 @@ public partial class App : Application
         });
     }
     
-    private void RefreshDevices()
+    private void InitRefreshDevices()
     {
         _devicesDropDownMenu.DropDownItems.Clear();
         foreach (var device in _bluetoothHandler.GetPairedDeviceNames())
