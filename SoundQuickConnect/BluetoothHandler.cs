@@ -43,7 +43,7 @@ public class BluetoothHandler
     /// <returns></returns>
     public bool ConnectToDevice(string deviceName)
     {
-        if (!_bluetoothDevicesDict.TryGetValue(deviceName, out var device) || !IsDeviceConnected(device))
+        if (!_bluetoothDevicesDict.TryGetValue(deviceName, out var device) || IsDeviceConnected(device))
         {
             return false;
         }
