@@ -8,12 +8,7 @@ namespace SoundQuickConnect;
 
 public class BluetoothHandler
 {
-    private readonly BluetoothClient _bluetoothClient; // Point of ReadOnly
-                                                       // indicates that assignment to the field can only occur as
-                                                       // part of the declaration or in a constructor in the same class
-                                                       // more you know!
-                                                       // The point is for Immutability once initialised is the only reason for use.
-                                                       // As a developer it also demonstrates intent
+    private BluetoothClient _bluetoothClient;
     private Dictionary<string, BluetoothDeviceInfo> _bluetoothDevicesDict = new Dictionary<string, BluetoothDeviceInfo>();
 
     public BluetoothHandler()
@@ -56,6 +51,17 @@ public class BluetoothHandler
     }
 
     /// <summary>
+    /// TODO METHOD
+    /// </summary>
+    /// <param name="deviceName"></param>
+    public void DisconnectDevice(string deviceName)
+    {
+        // TODO, this will likely require to switch to another library and do it in different way
+        // See following : https://github.com/inthehand/32feet/issues/132
+        // For my purposes, I mainly wanted way to quickly connect so I am gonna leave it as be.
+    }
+    
+    /// <summary>
     ///  Additional safety check to ensure always retrieving latest device information when check if connected
     /// </summary>
     /// <param name="device"></param>
@@ -65,4 +71,19 @@ public class BluetoothHandler
         device.Refresh();
         return device.Connected;
     }
+    
+    /// <summary>
+    ///  Additional safety check to ensure always retrieving latest device information when check if connected
+    /// </summary>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    public bool IsDeviceConnected(string deviceName)
+    {
+        if (!_bluetoothDevicesDict.TryGetValue(deviceName, out var device))
+        {
+            return false;
+        }
+        return IsDeviceConnected(device);
+    }
+    
 }

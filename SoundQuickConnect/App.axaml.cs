@@ -104,6 +104,12 @@ public partial class App : Application
     {
         return new Forms.ToolStripMenuItem(deviceName, null, (sender, args) =>
         {
+            // TODO for future if need be
+            /*if (_bluetoothHandler.IsDeviceConnected(deviceName))
+            {
+                _bluetoothHandler.DisconnectDevice(deviceName);
+                return;
+            }*/
             _bluetoothHandler.ConnectToDevice(deviceName);
         });
     }
